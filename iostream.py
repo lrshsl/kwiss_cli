@@ -1,3 +1,5 @@
+import codecs                           # unicode encoding (Umlauts)
+
 from question import Question
 
 
@@ -18,13 +20,13 @@ endl = '\n'
 class IO:
     def __init__(self) -> None:
         tokens = {
-            'word-definition separator': ':',
-            'word separator': ','
+            'word-definition separator': u':',
+            'word separator': u','
         }
         self.wd_sep, self.w_sep = tokens.values()
 
     def get_questions_from_file(self, file):
-        lines = open(file, 'r').readlines()
+        lines = codecs.open(file, 'r', encoding='utf-8').readlines()
         parsed_lines = self.parse_lines(lines)
         for parsed_line in parsed_lines:
             yield parsed_line
@@ -32,7 +34,8 @@ class IO:
     def parse_lines(self, lines):
         for line_nb, line in enumerate(lines):
             parsed_line = self.parse_line(line, line_nb)
-            yield Question(parsed_line)
+            if parsed_line is not None:
+                yield Question(parsed_line)
 
     def parse_line(self, line, line_nb):
         if not self.is_parsable_line(line, line_nb):
