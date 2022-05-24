@@ -18,12 +18,13 @@ endl = '\n'
 
 
 class IO:
-    def __init__(self) -> None:
+    def __init__(self, reversed=False) -> None:
         tokens = {
             'word-definition separator': u':',
             'word separator': u','
         }
         self.wd_sep, self.w_sep = tokens.values()
+        self.reversed = reversed
 
     def get_questions_from_file(self, file):
         lines = codecs.open(file, 'r', encoding='utf-8').readlines()
@@ -41,11 +42,13 @@ class IO:
         if not self.is_parsable_line(line, line_nb):
             return
         left, right = line.split(self.wd_sep)
+        if self.reversed:
+            left, right = right, left
         return (self.parse(left), self.parse(right))
 
     def is_parsable_line(self, line, line_nb):
-        def is_only_alph(s): return any(c for c in s if c.isalpha())
-        if not(is_only_alph(line)):
+        def is_any_alpha(s): return any(c for c in s if c.isalpha())
+        if not is_any_alpha(line):
             return 0
         if line.count(self.wd_sep) != 1:
             raise Exception(

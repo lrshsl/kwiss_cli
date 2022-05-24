@@ -1,10 +1,22 @@
-import random
+import random                           # random.choice
 
 from iostream import IO, cout, endl     # IO is actually important
 
 
-SRC = 'src/' + 'en_irregular_verbs' + '.voci'
+# -------------------------------------#-------------------------------------#
+# Settings
+
+SRC = 'en_irregular_verbs'  # File to read. See file './doc.md'
+SWITCH_ORDER = False        # Switch word-definition to definition-word
+SPEEDRUN = True             # Trigger for insultions & co
+
+
+# -------------------------------------#-------------------------------------#
+# Code
+
+SRC = 'src/' + SRC + '.voci'
 # Ik, plus on str isn't the best idea, but does that matter here?
+
 
 INSULTIONS = (
     'Gotcha!',
@@ -28,8 +40,10 @@ CONGRATULATIOINS = (
 
 class Quiz:
     def __init__(self, file) -> None:
-        self.io = IO()
-        self.question_collection = list(self.io.get_questions_from_file(file))
+        self.io = IO(reversed=SWITCH_ORDER)
+        self.question_collection = list(
+            self.io.get_questions_from_file(file)
+        )
         if not len(self.question_collection):
             raise Exception('Empty file')
 
@@ -51,7 +65,7 @@ class Quiz:
             match ans.strip(' \t'):
                 case ':q' | ':quit' | ':exit':
                     return False
-                case ':help!' | ':help':
+                case ':help!' | ':help' | ':h':
                     cout << correct_ans << endl
                 case ':n' | ':next' | ':skip' | ':skip 1':
                     cout << correct_ans << endl
@@ -60,6 +74,8 @@ class Quiz:
                     if self.is_accepted(ans, correct_ans):
                         self.congratulate()
                         break
+                    else:
+                        self.insult()
         return True
 
     def ask(self, questions):
@@ -79,22 +95,36 @@ class Quiz:
                 'Not enough answers. Make sure you use \',\' to separate them'
             )
             return False
-        for e in entered:
-            if e.strip(' ,\t\n') not in answers:
+        elif len(entered) > len(answers):
+            self.complain(
+                'You entered too much words'
+            )
+        for i, (e, ans) in enumerate(zip(entered, answers)):
+            if e.strip(' ,\t\n') != ans:
                 self.complain(
-                    f'The answer \'{e}\' is not accepted'
-                )
+                    f'The answer \'{e}\' on {i+1}. place is not \
+accepted. For a hint enter :h'
+                )  # TODO: replace place??
                 return False
         return True
 
     @staticmethod
     def complain(msg):
+        cout << 'X' << endl
         cout << 'Wrong answer: ' << msg << endl
 
-    def congratulate(self):
-        cout << '\u2713' << endl << '"'
-        cout << random.choice(CONGRATULATIOINS)
-        cout << '"' << endl * 3
+    @staticmethod
+    def congratulate():
+        cout << '\u2713' << endl
+        if not SPEEDRUN:
+            cout << '"' << random.choice(CONGRATULATIOINS) << '"' << endl
+        cout << endl * 2
+
+    @staticmethod
+    def insult():
+        if not SPEEDRUN:
+            cout << '"' << random.choice(INSULTIONS) << '"' << endl
+        cout << endl * 2
 
 
 if __name__ == '__main__':
