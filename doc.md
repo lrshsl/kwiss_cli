@@ -23,7 +23,12 @@ type `ls`.
 Enter something like the following commands (replace 'fname' with the name of
 your vocabulary set)
 
-```fish
+```sh
+
+# To add you content in format 'x1, x2 : y1, y2':
 vim ./src/fname.voci
-sed -i "s/SRC*=*'*'/SRC = 'fname'/g"
+
+# Write filename to main.py
+sed -i -e '/##- SRC-Init -##/s/\'.*\'/\'fname\'/' ./main.py
+
 ```

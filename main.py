@@ -6,7 +6,7 @@ from iostream import IO, cout, endl     # IO is actually important
 # -------------------------------------#-------------------------------------#
 # Settings
 
-SRC = 'en_irregular_verbs'  # File to read. See file './doc.md'
+SRC = 'en_irregular_verbs'  # File to read. See README.md     ##- SRC-Init -##
 SWITCH_ORDER = False        # Switch word-definition to definition-word
 SPEEDRUN = True             # Trigger for insultions & co
 
