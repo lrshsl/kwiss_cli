@@ -14,3 +14,9 @@ class Str:
     @staticmethod
     def arr_to_str(s):
         return ', '.join(s)
+
+
+class Color:
+    RED = (1, 0, 0)
+    GREEN = (0, 1, 0)
+    WHITE = (1, 1, 1)

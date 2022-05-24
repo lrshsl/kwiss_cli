@@ -23,13 +23,18 @@ class Quiz:
         if not len(self.question_collection):
             raise Exception('File is empty')
 
+    def is_accepted(self, inpt, answers):
+        return self.backend.is_same(inpt, answers)
+
+    def get_new_question(self):
+        return random.choice(self.question_collection)
+
+
+"""
     def run(self):
         while 1:
             question = self.get_new_question()
             self.ask_until_answered(question)
-
-    def get_new_question(self):
-        return random.choice(self.question_collection)
 
     def ask_until_answered(self, question):
         questions = list(question.questions)
@@ -52,50 +57,39 @@ class Quiz:
                     else:
                         Output.insult(self.on_false, self.has_humor)
         return True
-
-    def is_accepted(self, inpt, answers):
-        return self.backend.is_same(inpt, answers)
+"""
 
 
 class Backend:
     def __init__(self, parser) -> None:
         self.parser = parser
+        self.err_msg = ''
 
-    def is_same(self, inpt, answers):
+    def is_same(self, inpt, answers):  # mega TODO: Make this mess readable
         entered = list(Parser.parse(inpt, self.parser.w_sep))
         answers = list(answers)
         if len(entered) < len(answers):
-            Output.complain(
-                'Not enough answers. Make sure you use \',\' to separate them'
-            )
+            self.err_msg = '\
+Not enough answers. \
+Make sure you use \',\' to separate them'
             return False
         elif len(entered) > len(answers):
-            Output.complain(
-                'You entered too much words'
-            )
+            self.err_msg = 'You entered too much words'
         for i, (e, ans) in enumerate(zip(entered, answers)):
             if e.strip(' ,\t\n') != ans:
-                Output.complain(
-                    f'The answer \'{e}\' on {i+1}. place is not \
+                self.err_msg = f'\
+The answer \'{e}\' on {i+1}. place is not \
 accepted. For a hint enter :h'
-                )  # TODO: replace place??
                 return False
         return True
 
 
+"""
 class Output:
-    @staticmethod
-    def ask(questions):
-        prompt = '> '
-        for q in questions:
-            cout << '| ' << q << ' '
-        cout << '|' << endl * 2 << prompt
-        return input()
 
     @staticmethod
     def complain(msg):
-        cout << 'X' << endl * 2
-        cout << 'Wrong answer: ' << msg << endl
+        pass
 
     @staticmethod  # TODO: merge
     def congratulate(src, enabled):
@@ -109,3 +103,4 @@ class Output:
         if enabled:
             cout << '"' << random.choice(src) << '"' << endl
         cout << endl * 2
+"""

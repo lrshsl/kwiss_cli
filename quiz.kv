@@ -11,16 +11,23 @@
 
 		Label:
 			id: question_label
-			text: app.get_new_formatted_question()
+			text: root.question
 			font_size: '30sp'
 			size: self.texture_size
 
-        Label:
-            id: indicator
-            text: ''
-            pos_hint: {'center_x': 0.5, 'center_y': 0.9}
-            size: self.texture_size
-            centered: True
+		Label:
+			id: indicator_label
+			text: ''
+			pos_hint: {'center_x': 0.5, 'center_y': 0.9}
+			font_size: '20sp'
+			size: self.texture_size
+
+		Label:
+			id: hint_label
+			text: root.hint
+			color: (1, 1, 1, .5)
+			pos_hint: {'center_x': 0.5, 'center_y': 0.84}
+			size: self.texture_size
 
 		TextInput:
 			id: input
