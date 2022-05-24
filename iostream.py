@@ -17,7 +17,7 @@ cout = ostream()
 endl = '\n'
 
 
-class IO:
+class Parser:
     def __init__(self, reversed=False) -> None:
         tokens = {
             'word-definition separator': u':',
@@ -44,7 +44,7 @@ class IO:
         left, right = line.split(self.wd_sep)
         if self.reversed:
             left, right = right, left
-        return (self.parse(left), self.parse(right))
+        return (self.parse(left, self.w_sep), self.parse(right, self.w_sep))
 
     def is_parsable_line(self, line, line_nb):
         def is_any_alpha(s): return any(c for c in s if c.isalpha())
@@ -59,7 +59,8 @@ Found {line.count(self.wd_sep)}, expected 1"""
             )
         return 1
 
-    def parse(self, side):  # TODO: readable
+    @staticmethod
+    def parse(side, word_separator):  # TODO: readable
         """ Used to parse left hand side or right hand side of a voci item """
         def stripped(arr): return (x.strip(' \t\n\r') for x in arr)
-        return stripped(side.split(self.w_sep))
+        return stripped(side.split(word_separator))
