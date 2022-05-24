@@ -1,4 +1,5 @@
 from quiz import Quiz
+from frontend import QuizApp
 
 
 # -------------------------------------#-------------------------------------#
@@ -43,4 +44,5 @@ if __name__ == '__main__':
         on_true=CONGRATULATIOINS,
         has_humor=not SPEEDRUN
     )
-    quiz.run()
+    app = QuizApp(quiz)
+    app.run()

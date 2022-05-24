@@ -35,7 +35,7 @@ class Quiz:
         questions = list(question.questions)
         correct_ans = list(question.answers)
         while 1:
-            ans = self.ask(questions)
+            ans = Output.ask(questions)
 
             match ans.strip(' \t'):
                 case ':q' | ':quit' | ':exit':
@@ -46,30 +46,24 @@ class Quiz:
                     cout << correct_ans << endl * 3
                     break
                 case _:
-                    if self.backend.is_accepted(ans, correct_ans):
+                    if self.is_accepted(ans, correct_ans):
                         Output.congratulate(self.on_true, self.has_humor)
                         break
                     else:
                         Output.insult(self.on_false, self.has_humor)
         return True
 
-    def ask(self, questions):
-        for q in questions:
-            cout << '| ' << q << ' '
-        cout << '|' << endl * 2 << '> '
-        return input()
+    def is_accepted(self, inpt, answers):
+        return self.backend.is_same(inpt, answers)
 
 
 class Backend:
     def __init__(self, parser) -> None:
         self.parser = parser
 
-    def is_accepted(self, inpt, answers):
-        """ Will get extended """  # TODO
+    def is_same(self, inpt, answers):
         entered = list(Parser.parse(inpt, self.parser.w_sep))
-        return self.is_same(entered, answers)
-
-    def is_same(self, entered, answers):
+        answers = list(answers)
         if len(entered) < len(answers):
             Output.complain(
                 'Not enough answers. Make sure you use \',\' to separate them'
@@ -90,6 +84,14 @@ accepted. For a hint enter :h'
 
 
 class Output:
+    @staticmethod
+    def ask(questions):
+        prompt = '> '
+        for q in questions:
+            cout << '| ' << q << ' '
+        cout << '|' << endl * 2 << prompt
+        return input()
+
     @staticmethod
     def complain(msg):
         cout << 'X' << endl * 2

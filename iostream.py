@@ -1,6 +1,6 @@
 import codecs                           # unicode encoding (Umlauts)
 
-from question import Question
+from utils import Question
 
 
 class ostream:
