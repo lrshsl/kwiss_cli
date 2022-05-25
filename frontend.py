@@ -77,6 +77,9 @@ class Backend:
         elif ans in (':n', ':next', ':skip', ':skip 1'):
             self.supr.root.hint = Str.arr_to_str(self.correct_answer)
             self.generate_new_question()
+            self.supr.root.ids.question_label.text = Str.arr_to_str(
+                self.question
+            )
             return True
 
     def check_answer(self, ans):
