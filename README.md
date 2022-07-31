@@ -1,8 +1,9 @@
 # kwiss\_cli
 
-This project is not to be taken serious. I made it for myself, mainly
+
+_This project is not to be taken serious_! I made it for myself, mainly
 to learn kivy && other tools.
-I added download instructions for some friends.
+I added download instructions for a friend.
 *Use on own risk*
 
 
