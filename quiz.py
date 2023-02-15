@@ -1,11 +1,11 @@
-import random                           # random.choice
+import random                           # for random.choice
 
-from iostream import Parser, cout, endl     # Parser is actually important
+from iostream import cout, endl         # Parser is actually important
+from parser import Parser
 
 
 class Quiz:
-    def __init__(
-            self,
+    def __init__(self,
             file,
             on_false=None,
             on_true=None,
@@ -26,7 +26,8 @@ class Quiz:
     def run(self):
         while 1:
             question = self.get_new_question()
-            self.ask_until_answered(question)
+            if not self.ask_until_answered(question):
+                return
 
     def get_new_question(self):
         return random.choice(self.question_collection)
@@ -39,6 +40,7 @@ class Quiz:
 
             match ans.strip(' \t'):
                 case ':q' | ':quit' | ':exit':
+                    cout << endl << "--<[ Quitting ]>--" << endl;
                     return False
                 case ':help!' | ':help' | ':h':
                     cout << correct_ans << endl * 3
@@ -55,55 +57,65 @@ class Quiz:
 
     def ask(self, questions):
         for q in questions:
-            cout << '| ' << q << ' '
-        cout << '|' << endl * 2 << '> '
+            cout << '| ' << q << ' ';
+        cout << '|' << endl * 2 << '> ';
         return input()
 
 
 class Backend:
+
     def __init__(self, parser) -> None:
         self.parser = parser
+
 
     def is_accepted(self, inpt, answers):
         """ Will get extended """  # TODO
         entered = list(Parser.parse(inpt, self.parser.w_sep))
         return self.is_same(entered, answers)
 
+
     def is_same(self, entered, answers):
+        answers = set(answers);
+
+        if set(entered) == set(answers): return True;
+
         if len(entered) < len(answers):
             Output.complain(
-                'Not enough answers. Make sure you use \',\' to separate them'
-            )
-            return False
-        elif len(entered) > len(answers):
-            Output.complain(
-                'You entered too much words'
-            )
-        for i, (e, ans) in enumerate(zip(entered, answers)):
-            if e.strip(' ,\t\n') != ans:
+                'Not enough answers. Make sure you use \',\' to separate them');
+            return False;
+
+        if len(entered) > len(answers):
+            Output.complain('You entered too many words');
+            return False;
+
+        # Here, the sets are different although the length is the same
+        for i, e in enumerate(entered):
+            if e.strip(' ,\t\n') not in answers:
                 Output.complain(
-                    f'The answer \'{e}\' on {i+1}. place is not \
-accepted. For a hint enter :h'
+                    f'The answer \'{e}\' on {i+1}. place is not accepted. For a hint enter :h'
                 )  # TODO: replace place??
                 return False
-        return True
+
+        raise Exception("this code should not be reached")
+
 
 
 class Output:
+
     @staticmethod
     def complain(msg):
-        cout << 'X' << endl * 2
-        cout << 'Wrong answer: ' << msg << endl
+        cout << 'X' << endl * 2;
+        cout << 'Wrong answer: ' << msg << endl;
 
     @staticmethod  # TODO: merge
     def congratulate(src, enabled):
-        cout << '\u2713' << endl * 2
+        cout << '\u2713' << endl * 2   # Unicode: Tick(✓)
         if enabled:
-            cout << '"' << random.choice(src) << '"' << endl
-        cout << endl * 2
+            cout << '"' << random.choice(src) << '"' << endl;
+        cout << endl * 2;
 
     @staticmethod
     def insult(src, enabled):
         if enabled:
-            cout << '"' << random.choice(src) << '"' << endl
-        cout << endl * 2
+            cout << '"' << random.choice(src) << '"' << endl;
+        cout << endl * 2;

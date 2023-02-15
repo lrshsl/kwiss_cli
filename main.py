@@ -4,16 +4,22 @@ from quiz import Quiz
 # -------------------------------------#-------------------------------------#
 # Settings
 
-SRC = 'en_irregular_verbs'  # File to read. See README.md     ##- SRC-Init -##
-SWITCH_ORDER = False        # Switch word-definition to definition-word
-SPEEDRUN = True             # Trigger for insultions & co
+SET_NAME     = 'lat_sextadecima'  # File to read. See README.md     ##- SRC-Init -##
+SWITCH_ORDER = False              # Switch word-definition to definition-word
+SPEEDRUN     = True               # Trigger for insultions & co
+
+
+SOURCE_FOLDER = 'src' + '/'          # From where to read the voci files
+FILE_EXTENSION = '.voci'             # Can be everything, the format of the content matters
 
 
 # -------------------------------------#-------------------------------------#
 # Code
 
-SRC = 'src/' + SRC + '.voci'
-# Ik, plus on str isn't the best idea, but does that matter here?
+SRC = ''.join((
+    SOURCE_FOLDER,
+    SET_NAME,
+    FILE_EXTENSION))
 
 
 INSULTIONS = (
@@ -21,7 +27,7 @@ INSULTIONS = (
     'R u sure..?',
     'Seriously??',
     'Rather give up!',
-    'Will you ever lern it..?',
+    'Will you ever learn it..?',
     'That was close\n..\n Or at least better than the last 6e+300 tries =P'
 )
 
@@ -32,7 +38,10 @@ CONGRATULATIOINS = (
     'Ahmm.., I knew that too.\n\n\n\n\n\n I did.',
     'You\'re sooo intelligent! [eyes rolling]',
 
-    'Wow..'
+    'Wow..',
+    'Impressive',
+    'Unbelievable',
+    'Tribble Kill!\n\nOh, wrong game'
 )
 
 
@@ -41,6 +50,7 @@ if __name__ == '__main__':
         file=SRC,
         on_false=INSULTIONS,
         on_true=CONGRATULATIOINS,
-        has_humor=not SPEEDRUN
+        has_humor=not SPEEDRUN,
     )
     quiz.run()
+
