@@ -1,81 +1,77 @@
-import random                           # for random.choice
+import random
+from typing import List
 
-from iostream import cout, endl         # Parser is actually important
-from parser import Parser
+from src.utils.iostream import cout, endl
+from src.parser import Parser
+from src.utils.question import Question
 
 
 class Quiz:
     def __init__(self,
-            file,
-            on_false=None,
-            on_true=None,
-            has_humor=False,
-            reversed=False
-         ) -> None:
-        self.on_false, self.on_true = on_false, on_true
-        self.has_humor = has_humor
-
-        self.parser = Parser(reversed=reversed)
-        self.backend = Backend(self.parser)
-        self.question_collection = list(
-            self.parser.get_questions_from_file(file)
-        )
+                 file: str,
+                 reversed_=False
+                 ) -> None:
+        self.parser = Parser();
+        self.backend = Backend(self.parser);
+        self.question_collection = list((
+            Question.from_tuple(line)
+            for line in self.parser.get_pairs(file))
+        );
         if not len(self.question_collection):
-            raise Exception('File is empty')
+            raise Exception('File is empty');
 
     def run(self):
         while 1:
-            question = self.get_new_question()
+            question = self.get_new_question();
             if not self.ask_until_answered(question):
-                return
+                return;
 
     def get_new_question(self):
-        return random.choice(self.question_collection)
+        return random.choice(self.question_collection);
 
     def ask_until_answered(self, question):
-        questions = list(question.questions)
-        correct_ans = list(question.answers)
+        questions = list(question.lhs);
+        correct_ans = list(question.rhs);
         while 1:
-            ans = self.ask(questions)
+            ans = self.ask(questions);
 
             match ans.strip(' \t'):
                 case ':q' | ':quit' | ':exit':
                     cout << endl << "--<[ Quitting ]>--" << endl;
-                    return False
+                    return False;
                 case ':help!' | ':help' | ':h':
-                    cout << correct_ans << endl * 3
+                    cout << correct_ans << endl * 3;
                 case ':n' | ':next' | ':skip' | ':skip 1':
-                    cout << correct_ans << endl * 3
-                    break
+                    cout << correct_ans << endl * 3;
+                    break;
                 case _:
                     if self.backend.is_accepted(ans, correct_ans):
-                        Output.congratulate(self.on_true, self.has_humor)
-                        break
+                        Output.congratulate(None, False);
+                        break;
                     else:
-                        Output.insult(self.on_false, self.has_humor)
+                        Output.insult(None, False);
         return True
 
     def ask(self, questions):
         for q in questions:
             cout << '| ' << q << ' ';
         cout << '|' << endl * 2 << '> ';
-        return input()
+        return input();
 
 
 class Backend:
 
-    def __init__(self, parser) -> None:
-        self.parser = parser
+    def __init__(self, parser: Parser) -> None:
+        self.parser = parser;
 
 
-    def is_accepted(self, inpt, answers):
+    def is_accepted(self, inpt, answers: List[str]):
         """ Will get extended """  # TODO
-        entered = list(Parser.parse(inpt, self.parser.w_sep))
-        return self.is_same(entered, answers)
+        entered = self.parser.parse_answer(inpt);
+        return self.is_same(entered, answers);
 
 
-    def is_same(self, entered, answers):
-        answers = set(answers);
+    def is_same(self, entered: List[str], answers: List[str]):
 
         if set(entered) == set(answers): return True;
 
@@ -94,9 +90,9 @@ class Backend:
                 Output.complain(
                     f'The answer \'{e}\' on {i+1}. place is not accepted. For a hint enter :h'
                 )  # TODO: replace place??
-                return False
+                return False;
 
-        raise Exception("this code should not be reached")
+        raise Exception("this code should not be reached");
 
 
 
@@ -109,7 +105,7 @@ class Output:
 
     @staticmethod  # TODO: merge
     def congratulate(src, enabled):
-        cout << '\u2713' << endl * 2   # Unicode: Tick(✓)
+        cout << '\u2713' << endl * 2;   # Unicode: Tick (✓)
         if enabled:
             cout << '"' << random.choice(src) << '"' << endl;
         cout << endl * 2;
@@ -119,3 +115,5 @@ class Output:
         if enabled:
             cout << '"' << random.choice(src) << '"' << endl;
         cout << endl * 2;
+
+

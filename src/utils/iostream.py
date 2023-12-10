@@ -1,7 +1,6 @@
-from question import Question
 
 
-class ostream:
+class OStream:
     def __init__(self) -> None:
         pass
 
@@ -11,5 +10,5 @@ class ostream:
         return self
 
 
-cout = ostream()
+cout = OStream()
 endl = '\n'
