@@ -9,7 +9,6 @@ from src.utils.question import Question
 class Quiz:
     def __init__(self,
                  file: str,
-                 reversed_=False
                  ) -> None:
         self.parser = Parser();
         self.backend = Backend(self.parser);
@@ -17,40 +16,56 @@ class Quiz:
             Question.from_tuple(line)
             for line in self.parser.get_pairs(file))
         );
+        self.question_index: int = 0;
         if not len(self.question_collection):
             raise Exception('File is empty');
 
-    def run(self):
+
+    def run(self, reverse: bool = False, randomize_order: bool = False):
         while 1:
-            question = self.get_new_question();
-            if not self.ask_until_answered(question):
+            question = self.get_new_question(randomize_order);
+            if not question or not self.ask_until_answered(question, reverse):
                 return;
 
-    def get_new_question(self):
-        return random.choice(self.question_collection);
 
-    def ask_until_answered(self, question):
-        questions = list(question.lhs);
-        correct_ans = list(question.rhs);
+    def get_new_question(self, randomize_order: bool):
+        if randomize_order:
+            return random.choice(self.question_collection);
+
+        if self.question_index > len(self.question_collection):
+            return False;
+
+        # Next question (in order)
+        question: Question = self.question_collection[self.question_index];
+        self.question_index += 1;
+        return question;
+
+
+    def ask_until_answered(self, question: Question, reverse: bool):
+        words = list(question.lhs if not reverse else question.rhs);
+        definition = list(question.rhs if not reverse else question.lhs);
         while 1:
-            ans = self.ask(questions);
+            ans = self.ask(words);
 
             match ans.strip(' \t'):
                 case ':q' | ':quit' | ':exit':
                     cout << endl << "--<[ Quitting ]>--" << endl;
                     return False;
                 case ':help!' | ':help' | ':h':
-                    cout << correct_ans << endl * 3;
+                    cout << definition << endl * 3;
                 case ':n' | ':next' | ':skip' | ':skip 1':
-                    cout << correct_ans << endl * 3;
+                    cout << definition << endl * 3;
                     break;
+                case ':c' | ':clear':
+                    cout << endl * 20;
                 case _:
-                    if self.backend.is_accepted(ans, correct_ans):
+                    if self.backend.is_accepted(ans, definition):
                         Output.congratulate(None, False);
                         break;
                     else:
                         Output.insult(None, False);
         return True
+
 
     def ask(self, questions):
         for q in questions:

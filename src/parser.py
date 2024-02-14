@@ -4,9 +4,11 @@ from typing import List, Optional, Tuple, assert_type
 
 from src.utils.parsing_types import ParsingError, ParsingErrorType
 
+
 def nonempty(lines: List[str]):
     for line in lines:
-        if len(line.strip()) > 1:
+        line_without_comment: str = line.split("#", maxsplit=1)[0];
+        if len(line_without_comment.strip()) > 1:
             yield line;
 
 class Parser:
